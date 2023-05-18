@@ -143,3 +143,49 @@ exports.renameGroup = async (req, res) => {
     });
   }
 };
+
+exports.addToGroup = async (req, res) => {
+  const { chatId, userId } = req.body;
+
+  // const targetGroup = await ChatModel.findById(chatId);
+  // const userExist = await targetGroup.users.find((user) => user === chatId);
+  // if (userExist) {
+  //   return res.status(401).json({
+  //     success: false,
+  //     message: "user already exists",
+  //   });
+  // }
+
+  const userAdded = await ChatModel.findByIdAndUpdate(
+    chatId,
+    { $push: { users: userId } },
+    { new: true }
+  )
+    .populate("users")
+    .populate("groupAdmin");
+
+  res.send(userAdded);
+};
+
+exports.removeFormGroup = async (req, res) => {
+  const { chatId, userId } = req.body;
+
+  // const targetGroup = await ChatModel.findById(chatId);
+  // const userExist = await targetGroup.users.find((user) => user === chatId);
+  // if (userExist) {
+  //   return res.status(401).json({
+  //     success: false,
+  //     message: "user already exists",
+  //   });
+  // }
+
+  const removeUser = await ChatModel.findByIdAndUpdate(
+    chatId,
+    { $pull: { users: userId } },
+    { new: true }
+  )
+    .populate("users")
+    .populate("groupAdmin");
+
+  res.send(removeUser);
+};
