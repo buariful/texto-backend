@@ -1,12 +1,12 @@
 const express = require("express");
 const {
   getAllChats,
-  getSingleChat,
+  accessOneChat,
 } = require("../controller/chat.controller.js");
 const { protect } = require("../middleware/authMiddleware.js");
 const router = express.Router();
 
-router.route("/chat").get(getAllChats);
-router.route("/single-chat").get(protect, getSingleChat);
+router.route("/chats").get(protect, getAllChats);
+router.route("/access-one-chat").post(protect, accessOneChat);
 
 module.exports = router;

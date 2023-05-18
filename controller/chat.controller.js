@@ -2,11 +2,24 @@ const data = require("../data/data");
 const ChatModel = require("../model/chat.model");
 const UserModel = require("../model/user.model");
 
-exports.getAllChats = (req, res) => {
-  res.send(data);
+exports.getAllChats = async (req, res) => {
+  try {
+    const chat = await ChatModel.find({
+      users: { $elemMatch: { $eq: req.user._id } },
+    });
+    res.status(200).json({
+      success: true,
+      data: chat,
+    });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
 };
 
-exports.getSingleChat = async (req, res) => {
+exports.accessOneChat = async (req, res) => {
   const { userId } = req.body;
 
   if (!userId) {
