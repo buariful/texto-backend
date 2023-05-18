@@ -119,3 +119,27 @@ exports.createGroupChat = async (req, res) => {
     });
   }
 };
+
+exports.renameGroup = async (req, res) => {
+  const { chatName, chatId } = req.body;
+
+  const updatedChat = await ChatModel.findByIdAndUpdate(
+    chatId,
+    { chatName },
+    { new: true }
+  )
+    .populate("users")
+    .populate("groupAdmin");
+
+  if (!updatedChat) {
+    res.status(401).json({
+      success: false,
+      message: "can not update the name",
+    });
+  } else {
+    res.status(200).json({
+      success: true,
+      data: updatedChat,
+    });
+  }
+};
