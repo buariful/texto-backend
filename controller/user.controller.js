@@ -1,8 +1,9 @@
 const asyncHandler = require("express-async-handler");
 const UserModel = require("../model/user.model");
 const generateToken = require("../utils/generateToken");
+const ErrorClass = require("../utils/errorClass");
 
-exports.resigterUser = asyncHandler(async (req, res) => {
+exports.resigterUser = asyncHandler(async (req, res, next) => {
   const { name, email, password, picture } = req.body;
 
   if (!name || !email || !password) {
@@ -10,18 +11,22 @@ exports.resigterUser = asyncHandler(async (req, res) => {
   }
   const isUserExist = await UserModel.findOne({ email });
   if (isUserExist) {
-    res.status(400);
-    throw new Error("User already exists");
+    return next(
+      new ErrorClass("Email is in use. Please use another email.", 409)
+    );
   }
 
   const user = await UserModel.create({ name, email, password, picture });
   if (user) {
     res.status(201).json({
-      id: user._id,
-      name: user.name,
-      password: user.password,
-      email: user.email,
-      token: generateToken(user._id),
+      success: true,
+      data: {
+        id: user._id,
+        name: user.name,
+        password: user.password,
+        email: user.email,
+        token: generateToken(user._id),
+      },
     });
   } else {
     res.status(400);
