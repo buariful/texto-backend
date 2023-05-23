@@ -1,4 +1,3 @@
-const data = require("../data/data");
 const ChatModel = require("../model/chat.model");
 const UserModel = require("../model/user.model");
 
@@ -7,8 +6,8 @@ exports.getAllChats = async (req, res) => {
     let chat = await ChatModel.find({
       users: { $elemMatch: { $eq: req.user._id } },
     })
-      .populate("users", "-password")
-      .populate("groupAdmin", "-password")
+      .populate("users")
+      .populate("groupAdmin")
       .populate("latestMessage")
       .sort({ updatedAt: -1 });
     chat = await UserModel.populate(chat, {

@@ -17,7 +17,6 @@ exports.protect = async (req, res, next) => {
         success: false,
         message: "Not authorized",
       });
-      console.log("no asce");
     }
   }
 };
