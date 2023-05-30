@@ -85,14 +85,16 @@ exports.createGroupChat = async (req, res) => {
     });
   }
 
-  let usersArray = JSON.parse(req.body.users);
+  let usersArray = [...req.body.users, req.user];
+
+  // let usersArray = JSON.parse(req.body.users);
   if (req.body.users.length < 2) {
     return res.status(401).json({
       success: false,
       message: "minimum 2 users required",
     });
   }
-  usersArray.push(req.user);
+  // usersArray.push(req.user);
 
   try {
     const newGroup = await ChatModel.create({
