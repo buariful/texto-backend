@@ -29,11 +29,18 @@ io.on("connection", (socket) => {
     socket.join(room);
   });
 
-  socket.on("typing", (room) => socket.in(room).emit("typing"));
-  socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+  socket.on("typing", (room) => {
+    socket.to(room).emit("typing");
+  });
+
+  socket.on("stop typing", (room) => {
+    socket.to(room).emit("stop typing");
+  });
+
+  // socket.on("typing", (room) => socket.in(room).emit("typing"));
+  // socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
 
   socket.on("new message", (newMessageRecieved) => {
-    console.log(newMessageRecieved);
     let chat = newMessageRecieved.chat;
     if (!chat.users) {
       return console.log("chat.users no foundsssssss");
@@ -42,6 +49,11 @@ io.on("connection", (socket) => {
     chat.users.forEach((user) => {
       if (user._id === newMessageRecieved.sender._id) return;
       socket.to(user._id).emit("message recieved", newMessageRecieved);
+      socket.to(user._id).emit("stop typing", chat._id);
     });
+  });
+
+  socket.on("hudai", (frontend) => {
+    socket.in(frontend).emit("hudai-response", frontend);
   });
 });
