@@ -1,0 +1,10 @@
+1. message sent hole message er jonno ekta notification create hobe. {chatId, userId}
+2. /api/notifications (get)
+---- chatId, userId diye all notification load hobe and chat e notification er number dekhabe
+
+3. api/notification (delete)
+---- chat e click korle {chatId, userId} diye khuje sob notification delet kore dibe.
+
+
+============ frontend ==========
+chatSlice 

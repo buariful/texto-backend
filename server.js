@@ -52,8 +52,4 @@ io.on("connection", (socket) => {
       socket.to(user._id).emit("stop typing", chat._id);
     });
   });
-
-  socket.on("hudai", (frontend) => {
-    socket.in(frontend).emit("hudai-response", frontend);
-  });
 });

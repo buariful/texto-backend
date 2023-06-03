@@ -2,6 +2,7 @@ const ErrorClass = require("../utils/errorClass");
 const MessageModel = require("../model/message.model");
 const UserModel = require("../model/user.model");
 const ChatModel = require("../model/chat.model");
+const NotificationModel = require("../model/notification.model");
 
 exports.sendMessage = async (req, res, next) => {
   const { content, chatId } = req.body;
@@ -14,10 +15,10 @@ exports.sendMessage = async (req, res, next) => {
     sender: req.user._id,
     content,
     chat: chatId,
+    notification: [],
   };
   try {
     let message = await MessageModel.create(newMessage);
-
     message = await message.populate("sender", "name picture");
     message = await message.populate("chat");
     message = await UserModel.populate(message, {
@@ -25,7 +26,20 @@ exports.sendMessage = async (req, res, next) => {
       select: "name picture email",
     });
 
-    await ChatModel.findByIdAndUpdate(req.body.chatId, {
+    let notifications;
+    const chat = await ChatModel.findById(chatId).populate("users");
+    chat?.users?.map(async (user) => {
+      if (user._id.toString() !== req.user._id.toString()) {
+        notifications = await NotificationModel.create({
+          chatId: chatId,
+          userId: user._id,
+          messageId: message._id,
+        });
+        message.notifications.push(notifications._id);
+      }
+    });
+
+    await ChatModel.findByIdAndUpdate(chatId, {
       latestMessage: message,
     });
 
