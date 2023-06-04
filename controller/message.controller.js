@@ -35,7 +35,8 @@ exports.sendMessage = async (req, res, next) => {
           userId: user._id,
           messageId: message._id,
         });
-        message.notifications.push(notifications._id);
+        message.notifications.push(notifications);
+        // message = await message.populate("notifications");
       }
     });
 

@@ -30,7 +30,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("typing", (room) => {
-    socket.to(room).emit("typing");
+    socket.to(room).emit("typing", room);
   });
 
   socket.on("stop typing", (room) => {
