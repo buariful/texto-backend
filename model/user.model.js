@@ -6,17 +6,37 @@ const userSchema = new mongoose.Schema(
     name: { type: String, required: true },
     email: { type: String, required: true },
     // password: { type: String, required: true },
-    password: { type: String, required: true, select: false },
-    picture: {
+    password: {
       type: String,
-      default:
-        "https://images.pexels.com/photos/7562313/pexels-photo-7562313.jpeg?auto=compress&cs=tinysrgb&h=204&fit=crop&w=228&dpr=1",
+      required: true,
+      select: false,
+      min: [6, "Please Enter minimum 6 characters"],
+    },
+    picture: {
+      url: { type: String, required: true },
+      publicId: { type: String, required: true },
     },
   },
   {
     timestamps: true,
   }
 );
+// const userSchema = new mongoose.Schema(
+//   {
+//     name: { type: String, required: true },
+//     email: { type: String, required: true },
+//     // password: { type: String, required: true },
+//     password: { type: String, required: true, select: false },
+//     picture: {
+//       type: String,
+//       default:
+//         "https://images.pexels.com/photos/7562313/pexels-photo-7562313.jpeg?auto=compress&cs=tinysrgb&h=204&fit=crop&w=228&dpr=1",
+//     },
+//   },
+//   {
+//     timestamps: true,
+//   }
+// );
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {

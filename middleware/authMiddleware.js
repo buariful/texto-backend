@@ -18,5 +18,10 @@ exports.protect = async (req, res, next) => {
         message: "Not authorized",
       });
     }
+  } else {
+    res.status(401).json({
+      success: false,
+      message: "Not authorized",
+    });
   }
 };
