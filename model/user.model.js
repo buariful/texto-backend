@@ -13,8 +13,12 @@ const userSchema = new mongoose.Schema(
       min: [6, "Please Enter minimum 6 characters"],
     },
     picture: {
-      url: { type: String, required: true },
-      publicId: { type: String, required: true },
+      url: {
+        type: String,
+        default:
+          "https://res.cloudinary.com/dygolqxi7/image/upload/v1686410834/texto/avatar_p00iqr.png",
+      },
+      publicId: { type: String },
     },
   },
   {
