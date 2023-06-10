@@ -20,10 +20,15 @@ exports.resigterUser = async (req, res, next) => {
     );
   }
 
-  const result = await cloudinary.uploader.upload(req.file.path, {
-    folder: "texto",
-    transformation: [{ max_width: 512, max_height: 512 }],
-  });
+  let result;
+  try {
+    result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "texto",
+      transformation: [{ max_width: 512, max_height: 512 }],
+    });
+  } catch (error) {
+    console.log(error);
+  }
   const imageData = {
     url: result?.secure_url,
     publicId: result?.public_id,
