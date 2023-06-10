@@ -40,6 +40,7 @@ exports.resigterUser = async (req, res, next) => {
       success: true,
       data: user,
       token: `Bearer ${generateToken(user._id)}`,
+      message: "Successfully registered",
     });
   } else {
     res.status(400);
@@ -70,6 +71,7 @@ exports.loginUser = async (req, res) => {
       success: true,
       data: userWithoutPassword,
       token,
+      message: "Welcome again",
     });
   } else {
     res.status(401).json({
@@ -130,7 +132,7 @@ exports.updateProfile = async (req, res, next) => {
     return next(new ErrorClass("Given data is not enough", 400));
   }
   const isUserExist = await UserModel.findOne({ email });
-  if (isUserExist && email === !req.user.email) {
+  if (isUserExist && email !== req.user.email) {
     return next(new ErrorClass("Email is in use, use another email"));
   }
 
@@ -164,7 +166,12 @@ exports.updateProfile = async (req, res, next) => {
     delete userWithoutPassword.password;
     const token = `Bearer ${generateToken(updateProfile._id)}`;
 
-    res.status(200).json({ success: true, data: updateProfile, token });
+    res.status(200).json({
+      success: true,
+      message: "Successfully updated your profile",
+      data: updateProfile,
+      token,
+    });
   } catch (error) {
     return next(
       new ErrorClass("Profile can not be updated, something went wrong", 400)
@@ -202,6 +209,7 @@ exports.updatePassword = async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: userWithoutPassword,
+    message: "Successfully update your password",
     token,
   });
 

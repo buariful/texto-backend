@@ -158,7 +158,7 @@ exports.removeFormGroup = async (req, res, next) => {
   const { chatId, userId } = req.body;
   let message;
   const targetGroup = await ChatModel.findById(chatId);
-  if (targetGroup.groupAdmin._id.toString() !== req.user._id.toString()) {
+  if (targetGroup?.groupAdmin._id.toString() !== req.user._id.toString()) {
     message = "Successfully leave from the group";
   } else {
     message = "Successfully removed from the group";
