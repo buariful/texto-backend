@@ -1,5 +1,6 @@
 const ChatModel = require("../model/chat.model");
 const UserModel = require("../model/user.model");
+const ErrorClass = require("../utils/errorClass");
 
 exports.getAllChats = async (req, res) => {
   try {
@@ -77,12 +78,9 @@ exports.accessOneChat = async (req, res) => {
   }
 };
 
-exports.createGroupChat = async (req, res) => {
+exports.createGroupChat = async (req, res, next) => {
   if (!req.body.users || !req.body.name) {
-    res.status(400).json({
-      success: false,
-      message: "Given information isn't enough",
-    });
+    return next(new ErrorClass("Please fill all the fields", 400));
   }
 
   let usersArray = [...req.body.users, req.user];
@@ -133,10 +131,7 @@ exports.renameGroup = async (req, res) => {
     .populate("groupAdmin");
 
   if (!updatedChat) {
-    res.status(401).json({
-      success: false,
-      message: "can not update the name",
-    });
+    return next(new ErrorClass("can not update the name", 401));
   } else {
     res.status(200).json({
       success: true,
@@ -147,15 +142,6 @@ exports.renameGroup = async (req, res) => {
 
 exports.addToGroup = async (req, res) => {
   const { chatId, userId } = req.body;
-
-  // const targetGroup = await ChatModel.findById(chatId);
-  // const userExist = await targetGroup.users.find((user) => user === chatId);
-  // if (userExist) {
-  //   return res.status(401).json({
-  //     success: false,
-  //     message: "user already exists",
-  //   });
-  // }
 
   const userAdded = await ChatModel.findByIdAndUpdate(
     chatId,
@@ -168,17 +154,15 @@ exports.addToGroup = async (req, res) => {
   res.send(userAdded);
 };
 
-exports.removeFormGroup = async (req, res) => {
+exports.removeFormGroup = async (req, res, next) => {
   const { chatId, userId } = req.body;
-
-  // const targetGroup = await ChatModel.findById(chatId);
-  // const userExist = await targetGroup.users.find((user) => user === chatId);
-  // if (userExist) {
-  //   return res.status(401).json({
-  //     success: false,
-  //     message: "user already exists",
-  //   });
-  // }
+  let message;
+  const targetGroup = await ChatModel.findById(chatId);
+  if (targetGroup.groupAdmin._id.toString() !== req.user._id.toString()) {
+    message = "Successfully leave from the group";
+  } else {
+    message = "Successfully removed from the group";
+  }
 
   const removeUser = await ChatModel.findByIdAndUpdate(
     chatId,
@@ -188,5 +172,21 @@ exports.removeFormGroup = async (req, res) => {
     .populate("users")
     .populate("groupAdmin");
 
-  res.send(removeUser);
+  res.status(200).json({ success: true, message });
+};
+
+exports.deleteGroup = async (req, res, next) => {
+  const { chatId } = req.body;
+  const targetChat = await ChatModel.findById(chatId);
+
+  if (targetChat.groupAdmin.toString() !== req.user._id.toString()) {
+    return next(new ErrorClass("Only Admin can delete this group", 403));
+  }
+
+  const deleteGroup = await ChatModel.findByIdAndDelete(chatId);
+
+  res.status(200).json({
+    success: true,
+    message: "Succesfully deleted the group",
+  });
 };

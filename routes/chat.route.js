@@ -6,6 +6,7 @@ const {
   renameGroup,
   addToGroup,
   removeFormGroup,
+  deleteGroup,
 } = require("../controller/chat.controller.js");
 const { protect } = require("../middleware/authMiddleware.js");
 const router = express.Router();
@@ -16,5 +17,6 @@ router.route("/group").post(protect, createGroupChat);
 router.route("/rename-group").put(protect, renameGroup);
 router.route("/addTo-group").put(protect, addToGroup);
 router.route("/removefrom-group").put(protect, removeFormGroup);
+router.route("/delete-group").delete(protect, deleteGroup);
 
 module.exports = router;

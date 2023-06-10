@@ -15,9 +15,9 @@ router.route("/register").post(upload.single("image"), resigterUser);
 router.route("/login").post(loginUser);
 router.route("/getuser").get(getUserByToken);
 router.route("/users").get(protect, getAllUsers);
+router.route("/update-password").put(protect, updatePassword);
 router
   .route("/update-profile")
   .put(protect, upload.single("image"), updateProfile);
-router.route("/update-password").put(protect, updatePassword);
 
 module.exports = router;
