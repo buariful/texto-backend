@@ -17,11 +17,6 @@ const io = require("socket.io")(server, {
   },
 });
 
-console.log(
-  process.env.CLOUD_API_KEY,
-  process.env.CLOUD_API_SECRET,
-  process.env.CLIENT_SITE_URL
-);
 io.on("connection", (socket) => {
   socket.on("setup", (userData) => {
     socket.join(userData._id);

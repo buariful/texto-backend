@@ -27,7 +27,12 @@ exports.resigterUser = async (req, res, next) => {
       transformation: [{ max_width: 512, max_height: 512 }],
     });
   } catch (error) {
-    console.log(error);
+    return next(
+      new ErrorClass(
+        "Something went wrong. Probabily when uploading image",
+        400
+      )
+    );
   }
   const imageData = {
     url: result?.secure_url,
