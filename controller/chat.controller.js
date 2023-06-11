@@ -1,4 +1,6 @@
 const ChatModel = require("../model/chat.model");
+const MessageModel = require("../model/message.model");
+const NotificationModel = require("../model/notification.model");
 const UserModel = require("../model/user.model");
 const ErrorClass = require("../utils/errorClass");
 
@@ -182,7 +184,10 @@ exports.deleteGroup = async (req, res, next) => {
   if (targetChat.groupAdmin.toString() !== req.user._id.toString()) {
     return next(new ErrorClass("Only Admin can delete this group", 403));
   }
-
+  const deleteMessages = await MessageModel.deleteMany({ chat: chatId });
+  const deleteNotifications = await NotificationModel.deleteMany({
+    chatId: chatId,
+  });
   const deleteGroup = await ChatModel.findByIdAndDelete(chatId);
 
   res.status(200).json({
