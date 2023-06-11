@@ -91,7 +91,7 @@ exports.createGroupChat = async (req, res, next) => {
   if (req.body.users.length < 2) {
     return res.status(401).json({
       success: false,
-      message: "minimum 2 users required",
+      message: "minimum 3 users required including you",
     });
   }
   // usersArray.push(req.user);
@@ -112,6 +112,7 @@ exports.createGroupChat = async (req, res, next) => {
       success: true,
       total: groupChatInfo.length,
       data: groupChatInfo,
+      message: "Group creation successfull",
     });
   } catch (err) {
     res.status(400).json({
